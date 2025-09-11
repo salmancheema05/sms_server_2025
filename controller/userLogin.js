@@ -1,6 +1,8 @@
 import {
   accessTokenSaveQuery,
+  accessTokenUpdateQuery,
   getUserDataQuery,
+  getUserTokens,
   refreshTokenDeleteQuery,
   refreshTokenSaveQuery,
   refreshTokenUpdateQuery,
@@ -9,8 +11,9 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { decode } from "punycode";
 dotenv.config();
-const expiredTime = "1m";
+const expiredTime = "10s";
 export const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -77,27 +80,37 @@ const refreshTokenSave = async (accessToken, user_id) => {
 };
 export const createNewToken = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
-    const decodedData = jwt.decode(refreshToken);
-    delete decodedData.iat;
-    const newrefreshToken = await jwt.sign(decodedData, process.env.SECRET_KEY);
-    const refreshTokenSave = await refreshTokenUpdateQuery([
-      refreshToken,
-      newrefreshToken,
-      decodedData.user_id,
-    ]);
-    const newaccessToken = await jwt.sign(decodedData, process.env.SECRET_KEY, {
-      expiresIn: expiredTime,
-    });
-    const accessTokenSave = await accessTokenSaveQuery([
-      newaccessToken,
-      decodedData.user_id,
-    ]);
-    res.status(200).json({
-      message: accessTokenSave.rows[0].token[0],
-      refreshToken: refreshTokenSave.rows[0].refresh_token[0],
-      error: false,
-    });
+    const { token, refreshToken } = req.body;
+    if (token !== "" && refreshToken !== "") {
+      const decodedData = jwt.decode(refreshToken);
+      delete decodedData.iat;
+      const accessToken = await jwt.sign(decodedData, process.env.SECRET_KEY, {
+        expiresIn: expiredTime,
+      });
+      const newRefreshToken = await jwt.sign(
+        decodedData,
+        process.env.SECRET_KEY
+      );
+      await accessTokenUpdateQuery([token, accessToken, decodedData.user_id]);
+      await refreshTokenUpdateQuery([
+        refreshToken,
+        newRefreshToken,
+        decodedData.user_id,
+      ]);
+      const getUpdateToken = await getToken(accessToken, decodedData.user_id);
+      const getUpdateRefreshToken = await getRefreshToken(
+        newRefreshToken,
+        decodedData.user_id
+      );
+      res
+        .status(200)
+        .json({ message: getUpdateToken, refreshToken: getUpdateRefreshToken });
+    } else {
+      res.status(200).json({
+        message: "required user old token and refresh Token",
+        error: true,
+      });
+    }
   } catch (error) {
     console.error("createNewToken function in userLogin controller", error);
   }
@@ -117,4 +130,18 @@ export const userLogout = async (req, res) => {
   } catch (error) {
     console.error("logout function in userLogin controller", error);
   }
+};
+const getToken = async (token, id) => {
+  const result = await getUserTokens([id]);
+  const tokenArray = result.rows[0].token;
+  const index = tokenArray.indexOf(token);
+  const getNewToken = tokenArray[index];
+  return getNewToken;
+};
+const getRefreshToken = async (token, id) => {
+  const result = await getUserTokens([1]);
+  const refreshTokenArray = result.rows[0].refresh_token;
+  const index = refreshTokenArray.indexOf(token);
+  const getNewRefreshToken = refreshTokenArray[index];
+  return getNewRefreshToken;
 };

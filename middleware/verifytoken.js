@@ -13,8 +13,6 @@ export const verifyUserToken = (req, res, next) => {
     token = token.split(" ")[1];
     jwt.verify(token, tokenKey, async (error) => {
       if (error) {
-        const decoded = jwt.decode(token);
-        await tokenRemove([token, decoded.user_id]);
         return res.status(200).send({ message: "unauthorizated", error: true });
       } else {
         next();
