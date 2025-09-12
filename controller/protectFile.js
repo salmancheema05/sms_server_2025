@@ -4,7 +4,7 @@ export const file = (req, res) => {
   try {
     let { filename } = req.params;
     const { foldername } = req.query;
-    const imagePath = path.resolve(`uploadimages/${foldername}`, filename);
+    const imagePath = path.resolve(`upload/${foldername}`, filename);
 
     if (!fs.existsSync(imagePath)) {
       return res.status(404).json({ error: "Image not found" });
