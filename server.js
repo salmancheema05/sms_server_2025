@@ -17,6 +17,7 @@ import { createTeachersTable } from "./schemas/teachers.js";
 import dotenv from "dotenv";
 import { createSubjectsTable } from "./schemas/subjects.js";
 import { createSubjectsAsignToClassTable } from "./schemas/subjectAsignToClass.js";
+import { createLevelTable } from "./schemas/level.js";
 
 dotenv.config();
 const app = express();
@@ -44,6 +45,7 @@ createMaritalStatusTable();
 createTeachersTable();
 createSubjectsTable();
 createSubjectsAsignToClassTable();
+createLevelTable();
 // Start Server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

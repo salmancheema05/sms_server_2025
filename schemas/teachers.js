@@ -5,12 +5,13 @@ export const createTeachersTable = async () => {
     const createTeachersTable = `
             CREATE TABLE teachers(
                 teacher_id SERIAL PRIMARY KEY,
-                marital_status_id INT NOT NUll,
-                gender_id INT NOT NULL,
-                creator_id INT NOT NULL,
-                blood_group_id INT NOT NULL,
-                school_id INT NOT NUll,
-                school_teacher_id INT NOT NULL,
+                marital_status_id BIGINT NOT NUll,
+                gender_id BIGINT NOT NULL,
+                creator_id BIGINT NOT NULL,
+                blood_group_id BIGINT NOT NULL,
+                level_id BIGINT NOT NULL,
+                school_id BIGINT NOT NUll,
+                school_teacher_id BIGINT NOT NULL,
                 teacher_name TEXT NOT NULL,
                 spouse TEXT NOT NULL,
                 nic_number BIGINT  NOT NULL,
@@ -33,7 +34,8 @@ export const createTeachersTable = async () => {
                 FOREIGN KEY (updator_id) REFERENCES users(user_id),
                 FOREIGN KEY (gender_id) REFERENCES gender(gender_id),
                 FOREIGN KEY (blood_group_id) REFERENCES blood_group(blood_group_id),
-                FOREIGN KEY (marital_status_id) REFERENCES marital_status(marital_status_id)
+                FOREIGN KEY (marital_status_id) REFERENCES marital_status(marital_status_id),
+                FOREIGN KEY (level_id) REFERENCES level(level_id)
             ) 
         `;
     const result = await existsTable("teachers");

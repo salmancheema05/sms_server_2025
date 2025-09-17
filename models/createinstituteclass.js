@@ -1,16 +1,16 @@
 import { pool } from "../dbConnection.js";
 export const insertQuery = async (data) => {
   const query = `INSERT INTO institute_classes  
-                    (school_id, creator_id, class_id,session_id,group_id)
-                    VALUES ($1,$2,$3,$4,$5) RETURNING institute_class_id
+                    (school_id, creator_id, class_id,session_id,group_id,level_id)
+                    VALUES ($1,$2,$3,$4,$5,$6) RETURNING institute_class_id
                 `;
   const result = await pool.query(query, data);
   return result;
 };
 export const asignInsertQuery = async (data) => {
   const query = `INSERT INTO subjectsasigntoclass 
-                    (class_id, subject_id)
-                    VALUES ($1,$2)
+                    (class_id,school_id,subject_id)  
+                    VALUES ($1,$2,$3)
                 `;
   const result = await pool.query(query, data);
   return result;
@@ -51,5 +51,13 @@ export const selectAllClassesQuery = async (data) => {
       r.role_id, r.role_name
   `;
   const result = await pool.query(SelectQuery, data);
+  return result;
+};
+export const existOrNotClassQuery = async (data) => {
+  const query = `SELECT 1 FROM institute_classes 
+                WHERE class_id = $1 AND session_id = $2 AND group_id = $3 AND school_id =$4 AND
+                 level_id=$5
+                `;
+  const result = await pool.query(query, data);
   return result;
 };

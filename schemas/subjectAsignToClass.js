@@ -6,6 +6,7 @@ export const createSubjectsAsignToClassTable = async () => {
             CREATE TABLE subjectsasigntoclass(
                 subject_asign_to_class_id SERIAL PRIMARY KEY,
                 class_id BIGINT NOT NULL,
+                school_id  BIGINT NOT NULL,
                 subject_id BIGINT NOT NULL,
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP,

@@ -21,9 +21,10 @@ export const insertQuery = async (data) => {
             at_school,
             has_class_now,
             qualification,
-            school_teacher_id     
+            school_teacher_id,
+            level_id
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`;
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`;
   const result = await pool.query(query, data);
   return result;
 };
@@ -108,5 +109,21 @@ export const selectTeacherQuery = async (data) => {
   `;
 
   const result = await pool.query(SelectQuery, data);
+  return result;
+};
+export const getAllteachersAtSchoolAndFreeQuery = async (data) => {
+  const query = `SELECT 
+        teacher_id,
+        teacher_name, 
+        contact_number,
+        subject,
+        at_school,
+        has_class_now
+        From
+        teachers
+        WHERE at_school='yes' AND has_class_now ='no' AND school_id=$1 
+    
+    `;
+  const result = await pool.query(query, data);
   return result;
 };

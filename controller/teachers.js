@@ -1,4 +1,5 @@
 import {
+  getAllteachersAtSchoolAndFreeQuery,
   insertQuery,
   selectAllTeachersQuery,
   selectTeacherQuery,
@@ -26,6 +27,7 @@ export const addTeacher = async (req, res) => {
       qualification,
       school_id,
       creator_id,
+      level,
     } = req.body;
     const imageExists = existImage(image);
     const newTeacherID = await createTeacherID(school_id);
@@ -47,10 +49,11 @@ export const addTeacher = async (req, res) => {
       current_adress,
       job_type,
       subject,
-      "yes",
-      "yes",
+      "no",
+      "no",
       qualification,
       newTeacherID,
+      level,
     ]);
     if (result.rowCount === 1) {
       res
@@ -97,5 +100,14 @@ export const allDataOfteacher = async (req, res) => {
       error
     );
     res.status(500).json({ message: "internal error by server" });
+  }
+};
+export const getAllTeachersAtInstituteAndFree = async (req, res) => {
+  try {
+    const { school_id } = req.query;
+    const result = await getAllteachersAtSchoolAndFreeQuery([school_id]);
+    res.status(200).json({ result: result.rows, error: false });
+  } catch (error) {
+    console.log(error);
   }
 };

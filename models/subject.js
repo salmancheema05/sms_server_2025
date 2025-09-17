@@ -12,3 +12,9 @@ export const CheckExistSubjectQuery = async (data) => {
   const result = await pool.query(query, data);
   return result;
 };
+export const getAllSubjectOfClassQuery = async (data) => {
+  const query = `SELECT subject_id,subject_name FROM subjects WHERE subject_name LIKE $1 AND school_id= $2`;
+  data[0] = `%${data[0]}%`;
+  const result = await pool.query(query, data);
+  return result;
+};

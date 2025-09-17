@@ -13,6 +13,7 @@ import { fetchAllGroup } from "./controller/classGroup.js";
 import {
   createInstituteClass,
   fetchAllInstituteClasses,
+  findAllSubjectsofclass,
 } from "./controller/createinstituteClass.js";
 import { fetchAllBloodGroup } from "./controller/bloodGroup.js";
 import { fetchAllMaritalStatus } from "./controller/maritalStatus.js";
@@ -20,10 +21,12 @@ import {
   addTeacher,
   allDataOfteacher,
   fetchAllTeachers,
+  getAllTeachersAtInstituteAndFree,
 } from "./controller/teachers.js";
 import { uploadTeacherPicture } from "./middleware/teachersImage.js";
 import { file } from "./controller/protectFile.js";
 import { createSubject } from "./controller/subject.js";
+import { getAllLevel } from "./controller/instituteLevel.js";
 const route = express.Router();
 // Post Route start
 route.post("/api/schoolregister", schoolregister);
@@ -41,9 +44,11 @@ route.post(
   addTeacher
 );
 route.post("/api/createsubject", verifyUserToken, createSubject);
+
 // Post Route end with user token
 
 // Get Route start with user token
+route.get("/api/fetchalllevel", verifyUserToken, getAllLevel);
 route.get("/api/fetchallSession", verifyUserToken, fetchAllSession);
 route.get("/api/fetchallclasses", verifyUserToken, fetchAllClasses);
 route.get("/api/fetchclassgroup", verifyUserToken, fetchAllGroup);
@@ -53,6 +58,15 @@ route.get("/api/fetchallbloodgroup", verifyUserToken, fetchAllBloodGroup);
 route.get("/api/fetchallmaritalstatus", verifyUserToken, fetchAllMaritalStatus);
 route.get("/api/protectimage/:filename", verifyUserToken, file);
 route.get("/api/getdetialofteacher", verifyUserToken, allDataOfteacher);
+route.get(
+  "/api/findallsubjectofclass",
+  verifyUserToken,
+  findAllSubjectsofclass
+);
+route.get(
+  "/api/getallteachersatschoolandfree",
+  getAllTeachersAtInstituteAndFree
+);
 // Get Route end with user token
 
 // Get Route start

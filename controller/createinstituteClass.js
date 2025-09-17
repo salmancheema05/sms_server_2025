@@ -1,13 +1,22 @@
 import {
   asignInsertQuery,
+  existOrNotClassQuery,
   insertQuery,
   selectAllClassesQuery,
 } from "../models/createinstituteclass.js";
+import { getAllSubjectOfClassQuery } from "../models/subject.js";
 
 export const createInstituteClass = async (req, res) => {
   try {
-    const { school_id, creator_id, class_id, session_id, group_id, subjects } =
-      req.body;
+    const {
+      school_id,
+      creator_id,
+      class_id,
+      session_id,
+      group_id,
+      subjects,
+      level,
+    } = req.body;
     if (
       school_id &&
       creator_id &&
@@ -15,22 +24,40 @@ export const createInstituteClass = async (req, res) => {
       session_id &&
       session_id &&
       group_id &&
-      subjects.length == 0
+      subjects.length == 0 &&
+      level
     ) {
       res.status(200).json({ message: "all field required", error: true });
     } else {
-      const result = await insertQuery([
-        school_id,
-        creator_id,
+      const checkExist = await existOrNotClassQuery([
         class_id,
         session_id,
         group_id,
+        school_id,
+        level,
       ]);
-      const classID = result.rows[0].institute_class_id;
-      await subjectAsignToClass(subjectIds, classID);
-      res
-        .status(200)
-        .json({ message: "your class has been created", error: false });
+      if (checkExist.rowCount == 1) {
+        res.status(200).json({
+          message: "your class has been already created",
+          error: false,
+        });
+      } else {
+        const result = await insertQuery([
+          school_id,
+          creator_id,
+          class_id,
+          session_id,
+          group_id,
+          level,
+        ]);
+        const classID = result.rows[0].institute_class_id;
+        for (let subjectId of subjects) {
+          await asignInsertQuery([classID, school_id, subjectId]);
+        }
+        res
+          .status(200)
+          .json({ message: "your class has been created", error: false });
+      }
     }
   } catch (error) {
     console.log(
@@ -43,13 +70,6 @@ export const createInstituteClass = async (req, res) => {
     });
   }
 };
-
-// export const subjectAsignToClass = async (subjectIds, classID) => {
-//   for (let i = 0; i <= subjectIds.length - 1; i++) {
-//     const subjectID = subjectIds[i];
-//     await asignInsertQuery([classID, subjectID]);
-//   }
-// };
 export const fetchAllInstituteClasses = async (req, res) => {
   try {
     const { school_id } = req.query;
@@ -70,5 +90,18 @@ export const fetchAllInstituteClasses = async (req, res) => {
         "internal server error in getAllInstituteClasses function in createinstituteClass controller ",
       error: true,
     });
+  }
+};
+export const findAllSubjectsofclass = async (req, res) => {
+  try {
+    const { subject_name, school_id } = req.query;
+    const result = await getAllSubjectOfClassQuery([subject_name, school_id]);
+    res.status(200).json({ result: result.rows, error: false });
+  } catch (error) {
+    console.log(
+      "error in findAllSubjectOfClass in createinstituteclass controller",
+      error
+    );
+    res.status(200).json({ message: "internal server error", error: true });
   }
 };
