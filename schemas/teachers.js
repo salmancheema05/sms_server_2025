@@ -22,7 +22,7 @@ export const createTeachersTable = async () => {
                 teacher_salary INT NOT NULL,
                 current_adress TEXT NOT NULL,
                 job_type TEXT NOT NULL,
-                subject TEXT NOT NULL,
+                subject_code_id BIGINT NOT NULL,
                 at_school TEXT NOT NULL, 
                 has_class_now TEXT NOT NULL,
                 qualification JSONB NOT NULL,
@@ -35,7 +35,8 @@ export const createTeachersTable = async () => {
                 FOREIGN KEY (gender_id) REFERENCES gender(gender_id),
                 FOREIGN KEY (blood_group_id) REFERENCES blood_group(blood_group_id),
                 FOREIGN KEY (marital_status_id) REFERENCES marital_status(marital_status_id),
-                FOREIGN KEY (level_id) REFERENCES level(level_id)
+                FOREIGN KEY (level_id) REFERENCES level(level_id),
+                FOREIGN KEY (subject_code_id) REFERENCES subject_code(subject_code_id)
             ) 
         `;
     const result = await existsTable("teachers");

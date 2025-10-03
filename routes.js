@@ -25,8 +25,17 @@ import {
 } from "./controller/teachers.js";
 import { uploadTeacherPicture } from "./middleware/teachersImage.js";
 import { file } from "./controller/protectFile.js";
-import { createSubject } from "./controller/subject.js";
+import {
+  createSubject,
+  createSubjectCode,
+  createSubjectCodeByAi,
+  fetchSubjectcode,
+} from "./controller/subject.js";
 import { getAllLevel } from "./controller/instituteLevel.js";
+import {
+  fetchClassAndSubjectHasNoTeacher,
+  teacherAssignToClassAndSubject,
+} from "./controller/teacherAssignClassAndSubject.js";
 const route = express.Router();
 // Post Route start
 route.post("/api/schoolregister", schoolregister);
@@ -44,6 +53,12 @@ route.post(
   addTeacher
 );
 route.post("/api/createsubject", verifyUserToken, createSubject);
+route.post("/api/createsubjectcode", verifyUserToken, createSubjectCode);
+route.post(
+  "/api/assignteachertosubjectandclass",
+  verifyUserToken,
+  teacherAssignToClassAndSubject
+);
 
 // Post Route end with user token
 
@@ -64,9 +79,17 @@ route.get(
   findAllSubjectsofclass
 );
 route.get(
+  "/api/getclasssubjectshasnoteacher",
+  verifyUserToken,
+  fetchClassAndSubjectHasNoTeacher
+);
+route.get(
   "/api/getallteachersatschoolandfree",
+  verifyUserToken,
   getAllTeachersAtInstituteAndFree
 );
+route.get("/api/dataai", createSubjectCodeByAi);
+route.get("/api/fetchallsubjectcode", verifyUserToken, fetchSubjectcode);
 // Get Route end with user token
 
 // Get Route start

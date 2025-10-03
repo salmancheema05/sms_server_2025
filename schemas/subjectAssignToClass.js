@@ -1,10 +1,10 @@
 import { pool } from "../dbConnection.js";
 import existsTable from "./exisitsTable.js";
-export const createSubjectsAsignToClassTable = async () => {
+export const createSubjectsAssignToClassTable = async () => {
   try {
-    const createSubjectsAsignToClassTable = `
-            CREATE TABLE subjectsasigntoclass(
-                subject_asign_to_class_id SERIAL PRIMARY KEY,
+    const createSubjectsAssignToClassTable = `
+            CREATE TABLE subjectsassigntoclass(
+                subject_assign_to_class_id SERIAL PRIMARY KEY,
                 class_id BIGINT NOT NULL,
                 school_id  BIGINT NOT NULL,
                 subject_id BIGINT NOT NULL,
@@ -14,11 +14,11 @@ export const createSubjectsAsignToClassTable = async () => {
                 FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
             ) 
         `;
-    const result = await existsTable("subjectsasigntoclass");
+    const result = await existsTable("subjectsassigntoclass");
     if (result) {
-      console.log("subjectsAsignToClass Table already exists");
+      console.log("subjectsAssignToClass Table already exists");
     } else {
-      await pool.query(createSubjectsAsignToClassTable);
+      await pool.query(createSubjectsAssignToClassTable);
       console.log("subjectsAsignToClass table has been created");
     }
   } catch (error) {

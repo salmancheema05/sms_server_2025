@@ -16,8 +16,10 @@ import { createMaritalStatusTable } from "./schemas/maritalStatus.js";
 import { createTeachersTable } from "./schemas/teachers.js";
 import dotenv from "dotenv";
 import { createSubjectsTable } from "./schemas/subjects.js";
-import { createSubjectsAsignToClassTable } from "./schemas/subjectAsignToClass.js";
+import { createSubjectsAssignToClassTable } from "./schemas/subjectAssignToClass.js";
 import { createLevelTable } from "./schemas/level.js";
+import { createSubjectCodeTable } from "./schemas/subjectCode.js";
+import { createTeacherAssignClassesAndSubjectTable } from "./schemas/teacherassignclassesandsubject.js";
 
 dotenv.config();
 const app = express();
@@ -44,8 +46,10 @@ createBloodGroupTable();
 createMaritalStatusTable();
 createTeachersTable();
 createSubjectsTable();
-createSubjectsAsignToClassTable();
+createSubjectsAssignToClassTable();
 createLevelTable();
+createSubjectCodeTable();
+createTeacherAssignClassesAndSubjectTable();
 // Start Server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

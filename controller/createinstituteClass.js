@@ -1,5 +1,5 @@
 import {
-  asignInsertQuery,
+  assignInsertQuery,
   existOrNotClassQuery,
   insertQuery,
   selectAllClassesQuery,
@@ -52,7 +52,7 @@ export const createInstituteClass = async (req, res) => {
         ]);
         const classID = result.rows[0].institute_class_id;
         for (let subjectId of subjects) {
-          await asignInsertQuery([classID, school_id, subjectId]);
+          await assignInsertQuery([classID, school_id, subjectId]);
         }
         res
           .status(200)

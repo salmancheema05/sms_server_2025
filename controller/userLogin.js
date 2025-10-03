@@ -13,7 +13,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { decode } from "punycode";
 dotenv.config();
-const expiredTime = "10s";
+const expiredTime = "10m";
 export const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;

@@ -8,11 +8,13 @@ export const createSubjectsTable = async () => {
                 school_id BIGINT NOT NULL,
                 subject_name TEXT NOT NULL,
                 board_or_writer_name TEXT NOT NULL,
-                lever_id BIGINT NOT NULL,
+                level_id BIGINT NOT NULL,
+                subject_code_id BIGINT NOT NULL,
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP,
                 FOREIGN KEY (school_id) REFERENCES schoolregister(school_id),
-                FOREIGN KEY (lever_id) REFERENCES level(level_id
+                FOREIGN KEY (level_id) REFERENCES level(level_id),
+                FOREIGN KEY (subject_code_id) REFERENCES subject_code(subject_code_id)
             ) 
         `;
     const result = await existsTable("subjects");

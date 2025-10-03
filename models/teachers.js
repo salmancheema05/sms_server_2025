@@ -17,7 +17,7 @@ export const insertQuery = async (data) => {
             teacher_salary,
             current_adress,
             job_type,
-            subject,
+            subject_code_id,
             at_school,
             has_class_now,
             qualification,
@@ -113,15 +113,19 @@ export const selectTeacherQuery = async (data) => {
 };
 export const getAllteachersAtSchoolAndFreeQuery = async (data) => {
   const query = `SELECT 
-        teacher_id,
-        teacher_name, 
-        contact_number,
-        subject,
-        at_school,
+        t.teacher_id,
+        t.school_teacher_id,
+        t.teacher_name, 
+        t.contact_number,
+        sc.subject_code_name,
+        t.at_school,
+        l.level_name,
         has_class_now
         From
-        teachers
-        WHERE at_school='yes' AND has_class_now ='no' AND school_id=$1 
+        teachers t
+        INNER JOIN subject_code sc ON t.subject_code_id = sc.subject_code_id
+        INNER JOIN level l ON t.level_id = l.level_id
+        WHERE t.at_school='yes' AND t.has_class_now ='no' AND t.school_id=$1 
     
     `;
   const result = await pool.query(query, data);

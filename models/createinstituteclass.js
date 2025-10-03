@@ -7,8 +7,8 @@ export const insertQuery = async (data) => {
   const result = await pool.query(query, data);
   return result;
 };
-export const asignInsertQuery = async (data) => {
-  const query = `INSERT INTO subjectsasigntoclass 
+export const assignInsertQuery = async (data) => {
+  const query = `INSERT INTO subjectsassigntoclass 
                     (class_id,school_id,subject_id)  
                     VALUES ($1,$2,$3)
                 `;
@@ -34,7 +34,7 @@ export const selectAllClassesQuery = async (data) => {
       r.role_id AS creator_role_id,
       r.role_name AS creator_role
     FROM 
-      subjectsasigntoclass sac
+      subjectsassigntoclass sac
       INNER JOIN institute_classes ic ON sac.class_id = ic.institute_class_id
       INNER JOIN classes c ON ic.class_id = c.school_class_id
       INNER JOIN subjects sb ON sac.subject_id = sb.subject_id
