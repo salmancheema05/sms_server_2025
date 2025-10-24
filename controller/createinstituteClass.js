@@ -1,9 +1,14 @@
 import {
   assignInsertQuery,
   existOrNotClassQuery,
+  fetchAllclassesForSelectBoxQuery,
   insertQuery,
   selectAllClassesQuery,
 } from "../models/createinstituteclass.js";
+import {
+  existOrNotSessionQuery,
+  sessionInsertQuery,
+} from "../models/sessionassignwithclass.js";
 import { getAllSubjectOfClassQuery } from "../models/subject.js";
 
 export const createInstituteClass = async (req, res) => {
@@ -18,46 +23,59 @@ export const createInstituteClass = async (req, res) => {
       level,
     } = req.body;
     if (
-      school_id &&
-      creator_id &&
-      class_id &&
-      session_id &&
-      session_id &&
-      group_id &&
-      subjects.length == 0 &&
-      level
+      school_id == "" ||
+      creator_id == "" ||
+      class_id == "" ||
+      session_id == "" ||
+      group_id == "" ||
+      subjects.length == 0 ||
+      level == ""
     ) {
-      res.status(200).json({ message: "all field required", error: true });
+      res.status(200).json({
+        message:
+          "school_id,creator_id,class_id,session_id,group_id are required",
+        error: true,
+      });
+    }
+    const classExist = await existOrNotClassQuery([
+      class_id,
+      group_id,
+      school_id,
+      level,
+    ]);
+    const existClass_id = classExist.rows[0]?.institute_class_id || null;
+    const sessionExists = await existOrNotSessionQuery([
+      school_id,
+      session_id,
+      existClass_id,
+    ]);
+
+    if (classExist.rowCount > 0 && sessionExists.rowCount > 0) {
+      return res.status(200).json({
+        message: "Your class has already been created",
+        error: false,
+      });
+    } else if (existClass_id != null) {
+      await sessionInsertQuery([school_id, session_id, existClass_id]);
+      res
+        .status(200)
+        .json({ message: "Create New session of exist class", error: false });
     } else {
-      const checkExist = await existOrNotClassQuery([
-        class_id,
-        session_id,
-        group_id,
+      const result = await insertQuery([
         school_id,
+        creator_id,
+        class_id,
+        group_id,
         level,
       ]);
-      if (checkExist.rowCount == 1) {
-        res.status(200).json({
-          message: "your class has been already created",
-          error: false,
-        });
-      } else {
-        const result = await insertQuery([
-          school_id,
-          creator_id,
-          class_id,
-          session_id,
-          group_id,
-          level,
-        ]);
-        const classID = result.rows[0].institute_class_id;
-        for (let subjectId of subjects) {
-          await assignInsertQuery([classID, school_id, subjectId]);
-        }
-        res
-          .status(200)
-          .json({ message: "your class has been created", error: false });
+      const classID = result.rows[0].institute_class_id;
+      for (let subjectId of subjects) {
+        await assignInsertQuery([classID, school_id, subjectId]);
       }
+      await sessionInsertQuery([school_id, session_id, classID]);
+      res
+        .status(200)
+        .json({ message: "your class has been created", error: false });
     }
   } catch (error) {
     console.log(
@@ -103,5 +121,23 @@ export const findAllSubjectsofclass = async (req, res) => {
       error
     );
     res.status(200).json({ message: "internal server error", error: true });
+  }
+};
+export const fetchAllClassesForSelectBox = async (req, res) => {
+  try {
+    const { school_id } = req.query;
+    if (!school_id || isNaN(school_id)) {
+      res.status(200).json({
+        message: "school_id query is required",
+        error: true,
+        status: 400,
+      });
+    } else {
+      const result = await fetchAllclassesForSelectBoxQuery([school_id]);
+      res.status(200).json({ result: result.rows, error: false });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "internal server error", error: true });
   }
 };

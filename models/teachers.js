@@ -116,7 +116,6 @@ export const getAllteachersAtSchoolAndFreeQuery = async (data) => {
         t.teacher_id,
         t.school_teacher_id,
         t.teacher_name, 
-        t.contact_number,
         sc.subject_code_name,
         t.at_school,
         l.level_name,
@@ -127,6 +126,26 @@ export const getAllteachersAtSchoolAndFreeQuery = async (data) => {
         INNER JOIN level l ON t.level_id = l.level_id
         WHERE t.at_school='yes' AND t.has_class_now ='no' AND t.school_id=$1 
     
+    `;
+  const result = await pool.query(query, data);
+  return result;
+};
+export const getTeachersSubjectsAndClassesQuery = async (data) => {
+  const query = `
+        SELECT
+        t.teacher_id,
+        t.teacher_name,
+        s.subject_name,
+        c.school_class_name
+        FROM
+        teacherassignclassesandsubject tcs
+        INNER JOIN teachers t ON tcs.teacher_id = t.teacher_id
+        INNER JOIN subjectsassigntoclass sc ON tcs.class_subject_id = sc.subject_assign_to_class_id
+        INNER JOIN subjects s ON sc.subject_id = s.subject_id
+        INNER JOIN institute_classes ic ON sc.class_id = ic.institute_class_id 
+        INNER JOIN classes c ON ic.class_id = c.school_class_id
+        WHERE
+        tcs.school_id =$1
     `;
   const result = await pool.query(query, data);
   return result;

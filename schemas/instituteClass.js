@@ -8,7 +8,6 @@ export const creatInstituteClassTable = async () => {
                     school_id INT NOT NULL,
                     creator_id INT NOT NULL,
                     class_id INT NOT NULL,
-                    session_id INT NOT NULL,
                     group_id INT NOT NULL,
                     level_id INT NOT NULL,
                     created_at TIMESTAMP DEFAULT NOW(),
@@ -18,7 +17,6 @@ export const creatInstituteClassTable = async () => {
                     FOREIGN KEY (creator_id) REFERENCES users(user_id),
                     FOREIGN KEY (updator_id) REFERENCES users(user_id),
                     FOREIGN KEY (class_id) REFERENCES classes(school_class_id),
-                    FOREIGN KEY (session_id) REFERENCES session(session_id),
                     FOREIGN KEY (group_id) REFERENCES class_group(group_id),
                     FOREIGN KEY (level_id) REFERENCES level(level_id)
                 ) 

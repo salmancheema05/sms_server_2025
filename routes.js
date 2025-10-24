@@ -7,11 +7,15 @@ import {
 } from "./controller/userLogin.js";
 import { fetchAllGender } from "./controller/gender.js";
 import { verifyUserToken } from "./middleware/verifytoken.js";
-import { fetchAllSession } from "./controller/session.js";
+import { fetchAllSession, fetchSessionBYQuery } from "./controller/session.js";
 import { fetchAllClasses } from "./controller/classes.js";
-import { fetchAllGroup } from "./controller/classGroup.js";
+import {
+  fetchAllGroup,
+  fetchClassGroupBYQuery,
+} from "./controller/classGroup.js";
 import {
   createInstituteClass,
+  fetchAllClassesForSelectBox,
   fetchAllInstituteClasses,
   findAllSubjectsofclass,
 } from "./controller/createinstituteClass.js";
@@ -22,6 +26,7 @@ import {
   allDataOfteacher,
   fetchAllTeachers,
   getAllTeachersAtInstituteAndFree,
+  teachersSubjectsAndClasses,
 } from "./controller/teachers.js";
 import { uploadTeacherPicture } from "./middleware/teachersImage.js";
 import { file } from "./controller/protectFile.js";
@@ -29,6 +34,7 @@ import {
   createSubject,
   createSubjectCode,
   createSubjectCodeByAi,
+  fetchSubjectByQuery,
   fetchSubjectcode,
 } from "./controller/subject.js";
 import { getAllLevel } from "./controller/instituteLevel.js";
@@ -36,6 +42,11 @@ import {
   fetchClassAndSubjectHasNoTeacher,
   teacherAssignToClassAndSubject,
 } from "./controller/teacherAssignClassAndSubject.js";
+import {
+  createSchooltime,
+  getSchooltimeByQuery,
+} from "./controller/schooltime.js";
+import { getAllDays } from "./controller/days.js";
 const route = express.Router();
 // Post Route start
 route.post("/api/schoolregister", schoolregister);
@@ -59,10 +70,15 @@ route.post(
   verifyUserToken,
   teacherAssignToClassAndSubject
 );
-
+route.post("/api/createschooltime", verifyUserToken, createSchooltime);
 // Post Route end with user token
 
 // Get Route start with user token
+route.get(
+  "/api/fetchallclssesforselectbox",
+  verifyUserToken,
+  fetchAllClassesForSelectBox
+);
 route.get("/api/fetchalllevel", verifyUserToken, getAllLevel);
 route.get("/api/fetchallSession", verifyUserToken, fetchAllSession);
 route.get("/api/fetchallclasses", verifyUserToken, fetchAllClasses);
@@ -88,8 +104,19 @@ route.get(
   verifyUserToken,
   getAllTeachersAtInstituteAndFree
 );
+route.get(
+  "/api/teacherssubjectsandclasses",
+  verifyUserToken,
+  teachersSubjectsAndClasses
+);
 route.get("/api/dataai", createSubjectCodeByAi);
 route.get("/api/fetchallsubjectcode", verifyUserToken, fetchSubjectcode);
+
+route.get("/api/getschooltimebyquery", verifyUserToken, getSchooltimeByQuery);
+route.get("/api/getsessionbyquery", verifyUserToken, fetchSessionBYQuery);
+route.get("/api/getclassgroupbyquery", verifyUserToken, fetchClassGroupBYQuery);
+route.get("/api/getsubjectsbyclass", verifyUserToken, fetchSubjectByQuery);
+route.get("/api/getalldays", verifyUserToken, getAllDays);
 // Get Route end with user token
 
 // Get Route start

@@ -10,7 +10,7 @@ export const createSubjectsAssignToClassTable = async () => {
                 subject_id BIGINT NOT NULL,
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP,
-                FOREIGN KEY (class_id) REFERENCES classes(school_class_id),
+                FOREIGN KEY (class_id) REFERENCES institute_classes(institute_class_id), 
                 FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
             ) 
         `;

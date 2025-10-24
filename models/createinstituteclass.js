@@ -1,8 +1,8 @@
 import { pool } from "../dbConnection.js";
 export const insertQuery = async (data) => {
   const query = `INSERT INTO institute_classes  
-                    (school_id, creator_id, class_id,session_id,group_id,level_id)
-                    VALUES ($1,$2,$3,$4,$5,$6) RETURNING institute_class_id
+                    (school_id, creator_id, class_id,group_id,level_id)
+                    VALUES ($1,$2,$3,$4,$5) RETURNING institute_class_id
                 `;
   const result = await pool.query(query, data);
   return result;
@@ -54,10 +54,25 @@ export const selectAllClassesQuery = async (data) => {
   return result;
 };
 export const existOrNotClassQuery = async (data) => {
-  const query = `SELECT 1 FROM institute_classes 
-                WHERE class_id = $1 AND session_id = $2 AND group_id = $3 AND school_id =$4 AND
-                 level_id=$5
+  const query = `SELECT institute_class_id FROM institute_classes 
+                WHERE class_id = $1  AND group_id = $2 AND school_id =$3 AND
+                 level_id=$4
                 `;
+  const result = await pool.query(query, data);
+  return result;
+};
+export const fetchAllclassesForSelectBoxQuery = async (data) => {
+  const query = `
+       SELECT 
+       ic.institute_class_id,
+       c.school_class_name
+       FROM
+       institute_classes ic
+       INNER JOIN classes c ON ic.class_id = c.school_class_id
+        WHERE 
+        ic.school_id = $1
+
+    `;
   const result = await pool.query(query, data);
   return result;
 };

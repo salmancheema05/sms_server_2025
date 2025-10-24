@@ -2,6 +2,7 @@ import {
   CheckExistSubjectQuery,
   createSubjectCodeQuery,
   fetchallSubjectCode,
+  fetchSubjectByClass,
   subjectCodeExistOrNot,
   subjectInsertQuery,
 } from "../models/subject.js";
@@ -100,6 +101,27 @@ export const fetchSubjectcode = async (req, res) => {
     res.status(200).json({ result: result.rows, error: false });
   } catch (error) {
     console.log("fetchSubjectcode error in subject controller", error);
+    res.status(500).json({ message: "internal server error", error: true });
+  }
+};
+export const fetchSubjectByQuery = async (req, res) => {
+  try {
+    const { school_id, institute_class_id } = req.query;
+    if (school_id == undefined || institute_class_id == undefined) {
+      res.status(200).json({
+        message: "required school_id, institute_class_id parameters",
+        stutus: 400,
+        error: true,
+      });
+    } else {
+      const result = await fetchSubjectByClass([institute_class_id, school_id]);
+      res.status(200).json({
+        result: result.rows,
+        error: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "internal server error", error: true });
   }
 };

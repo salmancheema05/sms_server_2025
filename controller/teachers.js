@@ -1,5 +1,6 @@
 import {
   getAllteachersAtSchoolAndFreeQuery,
+  getTeachersSubjectsAndClassesQuery,
   insertQuery,
   selectAllTeachersQuery,
   selectTeacherQuery,
@@ -109,5 +110,18 @@ export const getAllTeachersAtInstituteAndFree = async (req, res) => {
     res.status(200).json({ result: result.rows, error: false });
   } catch (error) {
     console.log(error);
+  }
+};
+export const teachersSubjectsAndClasses = async (req, res) => {
+  try {
+    const { school_id } = req.query;
+    const result = await getTeachersSubjectsAndClassesQuery([school_id]);
+    res.status(200).json({ result: result.rows, error: true });
+  } catch (error) {
+    console.log(
+      "teacherSubjectAndClass function error in teachers controller",
+      error
+    );
+    res.status(500).json({ message: "internal server error", error: true });
   }
 };

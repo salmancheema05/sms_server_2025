@@ -11,9 +11,8 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { decode } from "punycode";
 dotenv.config();
-const expiredTime = "10m";
+const expiredTime = "20s";
 export const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;

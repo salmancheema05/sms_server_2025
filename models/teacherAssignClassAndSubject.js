@@ -8,7 +8,8 @@ export const getClassForAssignTeachersQuery = async (data) => {
         sc.subject_code_name
         FROM 
         subjectsassigntoclass sac
-        INNER JOIN classes c ON sac.class_id = c.school_class_id
+        INNER JOIN institute_classes ic ON sac.class_id = ic.institute_class_id
+        INNER JOIN classes c ON ic.class_id = c.school_class_id
         INNER JOIN subjects s ON sac.subject_id = s.subject_id
         INNER JOIN level l ON s.level_id = l.level_id
         INNER JOIN subject_code sc ON s.subject_code_id = sc.subject_code_id

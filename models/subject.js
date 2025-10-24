@@ -35,3 +35,18 @@ export const fetchallSubjectCode = async (data) => {
   const result = await pool.query(query, data);
   return result;
 };
+export const fetchSubjectByClass = async (data) => {
+  const query = `
+       SELECT 
+       s.subject_id,
+       s.subject_name
+       FROM
+       institute_classes ic
+       INNER JOIN subjectsassigntoclass sc ON ic.institute_class_id = sc.class_id
+       INNER JOIN subjects s ON sc.subject_id = s.subject_id
+       WHERE
+       sc.class_id = $1 AND sc.school_id = $2
+    `;
+  const result = await pool.query(query, data);
+  return result;
+};

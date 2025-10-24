@@ -20,6 +20,9 @@ import { createSubjectsAssignToClassTable } from "./schemas/subjectAssignToClass
 import { createLevelTable } from "./schemas/level.js";
 import { createSubjectCodeTable } from "./schemas/subjectCode.js";
 import { createTeacherAssignClassesAndSubjectTable } from "./schemas/teacherassignclassesandsubject.js";
+import { createSchoolTimeTable } from "./schemas/schooltime.js";
+import { createSessionAssignWithClass } from "./schemas/sessionAssignWithClass.js";
+import { createDaysTable } from "./schemas/days.js";
 
 dotenv.config();
 const app = express();
@@ -50,6 +53,9 @@ createSubjectsAssignToClassTable();
 createLevelTable();
 createSubjectCodeTable();
 createTeacherAssignClassesAndSubjectTable();
+createSchoolTimeTable();
+createSessionAssignWithClass();
+createDaysTable();
 // Start Server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
