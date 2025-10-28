@@ -8,15 +8,13 @@ export const createSchoolTimeTable = async () => {
                 school_id BIGINT NOT NULL,
                 creator_id BIGINT NOT NULL,
                 updator_id BIGINT,
-                institute_class_id BIGINT NOT NULL,
                 start_time TEXT NOT NULL,
                 end_time TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP,
                 FOREIGN KEY (school_id) REFERENCES schoolregister(school_id),
                 FOREIGN KEY (creator_id) REFERENCES users(user_id),
-                FOREIGN KEY (updator_id) REFERENCES users(user_id),
-                FOREIGN KEY (institute_class_id) REFERENCES institute_classes(institute_class_id)
+                FOREIGN KEY (updator_id) REFERENCES users(user_id)
 
             ) 
         `;

@@ -1,29 +1,26 @@
 import {
   getSchoolTimeQuery,
   insertSchoolTimeQuery,
+  timeassigntoclassesQuery,
 } from "../models/schooltime.js";
 
 export const createSchooltime = async (req, res) => {
   try {
-    const { school_id, institute_class_id, creator_id, start_time, end_time } =
-      req.body;
+    const { school_id, creator_id, start_time, end_time } = req.body;
     if (
       school_id == "" ||
-      institute_class_id == "" ||
       creator_id == "" ||
       start_time == "" ||
       end_time == ""
     ) {
-      res.status(400).json({
-        message:
-          "school_id, institute_class_id, creator_id, start_time, end_time are required",
+      res.status(200).json({
+        message: "school_id, creator_id, start_time, end_time are required",
         error: true,
       });
     } else {
       const result = await insertSchoolTimeQuery([
         school_id,
         creator_id,
-        institute_class_id,
         start_time,
         end_time,
       ]);
@@ -41,15 +38,15 @@ export const createSchooltime = async (req, res) => {
 };
 export const getSchooltimeByQuery = async (req, res) => {
   try {
-    const { school_id, institute_class_id } = req.query;
-    if (school_id === undefined || institute_class_id === undefined) {
+    const { school_id } = req.query;
+    if (school_id === undefined) {
       res.status(200).json({
-        message: "required school_id, institute_class_id query parameters",
+        message: "required school_id query parameters",
         error: true,
         status: 400,
       });
     } else {
-      const result = await getSchoolTimeQuery([institute_class_id, school_id]);
+      const result = await getSchoolTimeQuery([school_id]);
       const timeData = result.rows[0];
       const startTime = timeData?.start_time || null;
       const endTime = timeData?.end_time || null;
@@ -58,7 +55,11 @@ export const getSchooltimeByQuery = async (req, res) => {
           start_time: convertTo12Hour(timeData.start_time),
           end_time: convertTo12Hour(timeData.end_time),
         };
-        res.status(200).json({ result: objectTime, error: false });
+        const obj = {
+          school_time_id: timeData.school_time_id,
+          time: objectTime.start_time + " - " + objectTime.end_time,
+        };
+        res.status(200).json({ result: obj, error: false });
       } else {
         res.status(200).json({ result: null, error: false });
       }
@@ -75,4 +76,51 @@ const convertTo12Hour = (time) => {
   return `${hour12.toString().padStart(2, "0")}:${minutes
     .toString()
     .padStart(2, "0")}${period}`;
+};
+export const assignTimeToClass = async (req, res) => {
+  try {
+    const { school_id, school_time_id, institute_class_id, creator_id } =
+      req.body;
+    if (
+      !school_id || // catches undefined, null, or empty string
+      !creator_id ||
+      !school_time_id ||
+      !institute_class_id
+    ) {
+      res.status(200).json({
+        message:
+          "school_id,creator_id,school_time_id,institute_class_id any parameters is missing ",
+        error: true,
+        status: 400,
+      });
+    } else if (
+      school_id == "" ||
+      institute_class_id.length == 0 ||
+      creator_id == "" ||
+      school_time_id == ""
+    ) {
+      res.status(200).json({
+        message:
+          "required school_id , creator_id,school_time_id,institute_class_id array of object parameters",
+        error: true,
+        status: 400,
+      });
+    } else {
+      for (let i = 0; i <= institute_class_id.length - 1; i++) {
+        const instituteClassId = institute_class_id[i];
+        await timeassigntoclassesQuery([
+          school_id,
+          creator_id,
+          school_time_id,
+          instituteClassId,
+        ]);
+      }
+      res
+        .status(200)
+        .json({ message: "assigned school time to classes", error: false });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "internal server error", error: true });
+  }
 };

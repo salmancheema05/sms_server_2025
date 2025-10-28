@@ -43,6 +43,7 @@ import {
   teacherAssignToClassAndSubject,
 } from "./controller/teacherAssignClassAndSubject.js";
 import {
+  assignTimeToClass,
   createSchooltime,
   getSchooltimeByQuery,
 } from "./controller/schooltime.js";
@@ -71,6 +72,7 @@ route.post(
   teacherAssignToClassAndSubject
 );
 route.post("/api/createschooltime", verifyUserToken, createSchooltime);
+route.post("/api/timeassigntoclasses", verifyUserToken, assignTimeToClass);
 // Post Route end with user token
 
 // Get Route start with user token
